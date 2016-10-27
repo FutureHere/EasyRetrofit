@@ -76,10 +76,9 @@ public class KKNetWorkRequest {
         return this;
     }
 
-    public Retrofit getRetrofit() {
-        return mRetrofit;
+    public <T> T create(Class<T> tClass) {
+        return mRetrofit.create(tClass);
     }
-
 
     public void clearCookie() {
         ((CookieManager) mOkHttpClient.cookieJar()).clearCookie();
