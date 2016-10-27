@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">EasyRetrofit</string>
+    <string name="err404">无法找到指定位置的资源</string>
+    <string name="err500">内部服务器错误</string>
+    <string name="err502">网关错误</string>
+    <string name="errDefault">网络错误</string>
+    <string name="errTimeout">网络连接超时</string>
+</resources>
