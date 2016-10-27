@@ -1,8 +1,6 @@
 package com.hly.easyretrofit.config;
 
 
-import com.kk.tool.util.KLog;
-
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -30,8 +28,6 @@ public class LoggingInterceptor implements Interceptor {
 
 //        sLogger.i(String.format("Response headers %s",response.headers()));
         if (request != null && request.url() != null) {
-            KLog.e("----------url:", request.url().toString());
-            KLog.e("response code:", response.code());
         }
 
         return response;

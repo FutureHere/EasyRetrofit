@@ -1,7 +1,6 @@
 package com.hly.easyretrofit.config;
 
 import com.alibaba.fastjson.JSON;
-import com.kk.tool.util.KLog;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -29,7 +28,6 @@ public class FastJsonResponseBodyConverter<T> implements Converter<ResponseBody,
     public T convert(ResponseBody value) throws IOException {
         BufferedSource bufferedSource = Okio.buffer(value.source());
         String tempStr = bufferedSource.readUtf8();
-        KLog.e("------------json:" + tempStr);
         bufferedSource.close();
         if (tempStr.trim().startsWith("[")) {   //个别接口传的是jsonarray，服务器历史问题
             tempStr = "{\"array\":" + tempStr + "}";

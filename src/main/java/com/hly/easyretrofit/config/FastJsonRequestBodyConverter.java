@@ -1,6 +1,8 @@
 package com.hly.easyretrofit.config;
 
 
+import com.alibaba.fastjson.JSON;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
