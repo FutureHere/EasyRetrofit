@@ -20,6 +20,12 @@ import okio.Okio;
  * email hugh_hly@sina.cn
  */
 public class CommonInterceptor implements Interceptor {
+    /**
+     * 这里是设置缓存的
+     * @param chain
+     * @return
+     * @throws IOException
+     */
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();

@@ -29,9 +29,6 @@ public class FastJsonResponseBodyConverter<T> implements Converter<ResponseBody,
         BufferedSource bufferedSource = Okio.buffer(value.source());
         String tempStr = bufferedSource.readUtf8();
         bufferedSource.close();
-        if (tempStr.trim().startsWith("[")) {   //个别接口传的是jsonarray，服务器历史问题
-            tempStr = "{\"array\":" + tempStr + "}";
-        }
         try {
             return JSON.parseObject(tempStr, type);
         } catch (Exception e) {

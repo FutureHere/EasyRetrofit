@@ -12,10 +12,15 @@ import okhttp3.Route;
 /**
  * Created by hly on 16/4/1.
  * email hugh_hly@sina.cn
- *
- * Modify by guoning, delete local tag.
- */
+ **/
 public class AuthenticatorManager implements Authenticator {
+    /**
+     * 处理401返回码 当然用不到 你可以不写
+     * @param route
+     * @param response
+     * @return
+     * @throws IOException
+     */
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
         System.out.println("Authenticating for response: " + response);

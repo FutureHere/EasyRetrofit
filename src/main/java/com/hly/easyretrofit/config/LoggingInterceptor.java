@@ -19,14 +19,10 @@ public class LoggingInterceptor implements Interceptor {
 
         Request request = chain.request();
         long t1 = System.nanoTime();
-//        sLogger.i(String.format("Sending request %s on %s%n%s", request.url(), chain.connection(), request.headers()));
 
         Response response = chain.proceed(request);
         long t2 = System.nanoTime();
 
-//        sLogger.i(String.format("Received request %s on %s%n%s", request.url(), (t2 - t1), request.headers()));
-
-//        sLogger.i(String.format("Response headers %s",response.headers()));
         if (request != null && request.url() != null) {
         }
 
