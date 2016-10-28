@@ -1,7 +1,7 @@
 # EasyRetrofit
 an encapsulation for Retrofit2.1
 
-Its a module needed to be dependence from your main app  
+Its a module needed to be dependence from your main module  
 
 write it to your app gradle like this:
 dependencies {
