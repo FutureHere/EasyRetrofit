@@ -7,7 +7,6 @@ import com.hly.easyretrofit.config.CommonInterceptor;
 import com.hly.easyretrofit.config.CookieManager;
 import com.hly.easyretrofit.config.FastJsonConverterFactory;
 import com.hly.easyretrofit.config.LoggingInterceptor;
-import com.hly.easyretrofit.download.DownLoadService;
 import com.hly.easyretrofit.util.NetErrStringUtils;
 
 import java.io.File;
@@ -50,8 +49,6 @@ public class KKNetWorkRequest {
 
     private OkHttpClient mOkHttpClient;
 
-    private DownLoadService mDownLoadService;
-
     /**
      * 初始化Retrofit
      *
@@ -75,7 +72,6 @@ public class KKNetWorkRequest {
                     .baseUrl(baseURL)//主机地址
                     .client(mOkHttpClient)
                     .build();
-            mDownLoadService = mRetrofit.create(DownLoadService.class);
         }
         return this;
     }
@@ -86,10 +82,6 @@ public class KKNetWorkRequest {
 
     public void clearCookie() {
         ((CookieManager) mOkHttpClient.cookieJar()).clearCookie();
-    }
-
-    public DownLoadService getDownLoadService() {
-        return mDownLoadService;
     }
 
     /**
