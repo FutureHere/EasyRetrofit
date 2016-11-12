@@ -7,12 +7,12 @@ package com.hly.easyretrofit.retrofit;
 public class BaseRequestEntity {
     private String tag;
     private int requestCode;
-    private KKNetworkResponse kKNetworkResponse;
+    private NetworkResponse mKKNetworkResponse;
 
-    public BaseRequestEntity(String tag, int requestCode, KKNetworkResponse kKNetworkResponse) {
+    public BaseRequestEntity(String tag, int requestCode, NetworkResponse kKNetworkResponse) {
         this.tag = tag;
         this.requestCode = requestCode;
-        this.kKNetworkResponse = kKNetworkResponse;
+        this.mKKNetworkResponse = kKNetworkResponse;
     }
 
     public String getTag() {
@@ -31,8 +31,8 @@ public class BaseRequestEntity {
         this.requestCode = requestCode;
     }
 
-    public KKNetworkResponse getkKNetworkResponse() {
-        return kKNetworkResponse;
+    public NetworkResponse getKKNetworkResponse() {
+        return mKKNetworkResponse;
     }
 
 }

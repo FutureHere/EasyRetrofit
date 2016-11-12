@@ -1,6 +1,6 @@
 package com.hly.easyretrofit.config;
 
-import com.hly.easyretrofit.retrofit.KKNetWorkRequest;
+import com.hly.easyretrofit.retrofit.NetWorkRequest;
 import com.hly.easyretrofit.util.NetWorkUtils;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class CommonInterceptor implements Interceptor {
         Request originalRequest = chain.request();
         Request.Builder newBuilder = originalRequest.newBuilder();
         Request compressedRequest;
-        if (!NetWorkUtils.isNetConnect(KKNetWorkRequest.getInstance().mContext)) {
+        if (!NetWorkUtils.isNetConnect(NetWorkRequest.getInstance().mContext)) {
             newBuilder.cacheControl(CacheControl.FORCE_CACHE);//从缓存中读取
         } else {
             newBuilder.cacheControl(CacheControl.FORCE_NETWORK);
@@ -54,7 +54,7 @@ public class CommonInterceptor implements Interceptor {
 
         Response response = chain.proceed(compressedRequest);
 
-        if (NetWorkUtils.isNetConnect(KKNetWorkRequest.getInstance().mContext)) {
+        if (NetWorkUtils.isNetConnect(NetWorkRequest.getInstance().mContext)) {
             int maxAge = 60 * 60; // 有网络时 设置缓存超时时间一小时
             response = response.newBuilder()
                     .removeHeader("Pragma")

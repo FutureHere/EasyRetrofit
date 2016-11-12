@@ -28,17 +28,17 @@ import retrofit2.Retrofit;
  * Created by hly on 16/3/30.
  * email hugh_hly@sina.cn
  */
-public class KKNetWorkRequest {
+public class NetWorkRequest {
 
-    public static final String TAG = KKNetWorkRequest.class.getSimpleName();
+    public static final String TAG = NetWorkRequest.class.getSimpleName();
 
-    private KKNetWorkRequest() {
+    private NetWorkRequest() {
 
     }
 
-    private static KKNetWorkRequest sInstance = new KKNetWorkRequest();
+    private static NetWorkRequest sInstance = new NetWorkRequest();
 
-    public static KKNetWorkRequest getInstance() {
+    public static NetWorkRequest getInstance() {
         return sInstance;
     }
 
@@ -57,9 +57,9 @@ public class KKNetWorkRequest {
      *
      * @param context
      */
-    public KKNetWorkRequest init(Context context, String baseURL) {
+    public NetWorkRequest init(Context context, String baseURL) {
         this.mContext = context;
-        synchronized (KKNetWorkRequest.this) {
+        synchronized (NetWorkRequest.this) {
             mOkHttpClient = new OkHttpClient.Builder()
                     .cache(new Cache(new File(context.getExternalCacheDir(), "http_cache"), 1024 * 1024 * 100))
                     .readTimeout(15, TimeUnit.SECONDS)
@@ -101,7 +101,7 @@ public class KKNetWorkRequest {
      * @param <T>
      * @return
      */
-    public <T extends BaseResponseEntity> void asyncNetWork(final String TAG, final int requestCode, final Call<T> requestCall, final KKNetworkResponse<T> responseListener) {
+    public <T extends BaseResponseEntity> void asyncNetWork(final String TAG, final int requestCode, final Call<T> requestCall, final NetworkResponse<T> responseListener) {
         if (responseListener == null) {
             return;
         }
@@ -150,7 +150,7 @@ public class KKNetWorkRequest {
      * @param <T>
      * @return
      */
-    public <T extends BaseResponseEntity> void syncNetWork(final String TAG, final int requestCode, final Call<T> requestCall, final KKNetworkResponse<T> responseListener) {
+    public <T extends BaseResponseEntity> void syncNetWork(final String TAG, final int requestCode, final Call<T> requestCall, final NetworkResponse<T> responseListener) {
         if (responseListener == null) {
             return;
         }
