@@ -2,7 +2,7 @@ package com.hly.easyretrofit.download;
 
 import com.hly.easyretrofit.download.db.DownLoadDatabase;
 import com.hly.easyretrofit.download.db.DownLoadEntity;
-import com.hly.easyretrofit.retrofit.KKNetWorkRequest;
+import com.hly.easyretrofit.retrofit.NetWorkRequest;
 import com.hly.easyretrofit.util.CommonUtils;
 
 import java.io.File;
@@ -56,7 +56,7 @@ class DownLoadHandle {
                 setCount();
             } else {
                 //数据库中没记录 说明是新任务 获取文件长度
-                final Call<ResponseBody> mResponseCall = KKNetWorkRequest.getInstance().getDownLoadService().downloadFile(downLoadEntity.url, "bytes=" + 0 + "-" + 0);
+               final Call<ResponseBody> mResponseCall = NetWorkRequest.getInstance().getDownLoadService().downloadFile(downLoadEntity.url, "bytes=" + 0 + "-" + 0);
                 GetFileCountListener mGetFileCountListener = new GetFileCountListener() {
                     int reCount = 3;
 
@@ -80,9 +80,6 @@ class DownLoadHandle {
                 };
                 executeGetFileWork(mResponseCall, mGetFileCountListener);
             }
-//            if (!iterator.hasNext() && ((ThreadPoolExecutor) mGetFileService).getActiveCount() == 0 && ((ThreadPoolExecutor) mGetFileService).getQueue().size() == 0) {
-//                mGetFileService.shutdown();
-//            }
         }
         while (!mGetFileService.isShutdown() && getCount() != list.size()) {
 
