@@ -39,6 +39,8 @@ public class DownLoadDatabase {
             public static final String DOWNED = "downed";
             public static final String TOTAL = "total";
             public static final String SAVENAME = "saveName";
+            public static final String LASTMODIFY = "lastModify";
+
         }
 
         /**
@@ -51,7 +53,7 @@ public class DownLoadDatabase {
          */
         public static final String CREATE_SQL = "create table " + TABLE_NAME
                 + " (" + Columns.ID + " integer primary key autoincrement," + Columns.URL + " varchar(200),"
-                + Columns.START + " INTEGER," + Columns.END + " INTEGER," + Columns.TOTAL + " INTEGER," + Columns.DOWNED + " INTEGER," + Columns.SAVENAME + " varchar(200)" + ")";
+                + Columns.START + " INTEGER," + Columns.END + " INTEGER," + Columns.TOTAL + " INTEGER," + Columns.DOWNED + " INTEGER," + Columns.LASTMODIFY + " varchar(200)," + Columns.SAVENAME + " varchar(200)" + ")";
 
         /**
          * 删除表的SQL
@@ -62,8 +64,8 @@ public class DownLoadDatabase {
          * 添加一条数据的SQL
          */
         public static final String INSERT_SQL = "insert into " + TABLE_NAME
-                + " (" + Columns.URL + "," + Columns.START + "," + Columns.END + "," + Columns.TOTAL + "," + Columns.SAVENAME
-                + ") values (?,?,?,?,?)";
+                + " (" + Columns.URL + "," + Columns.START + "," + Columns.END + "," + Columns.TOTAL + "," + Columns.SAVENAME + "," + Columns.LASTMODIFY
+                + ") values (?,?,?,?,?,?)";
 
 
         /**
@@ -99,10 +101,10 @@ public class DownLoadDatabase {
     /**
      * 插入数据
      */
-    public synchronized DownLoadEntity insert(String url, int start, int end, int total, String saveName) {
+    public synchronized DownLoadEntity insert(String url, int start, int end, int total, String saveName, String lastModify) {
         String sql = DownLoad.INSERT_SQL;
         SQLiteDatabase sqlite = dbHelper.getWritableDatabase();
-        sqlite.execSQL(sql, new Object[]{url, start, end, total, saveName});
+        sqlite.execSQL(sql, new Object[]{url, start, end, total, saveName, lastModify});
         DownLoadEntity entity = null;
         Cursor cursor = sqlite.rawQuery(DownLoad.QUERY_URL_SQL_ID, new String[]{url, String.valueOf(start)});
         if (cursor.moveToNext()) {
@@ -114,6 +116,7 @@ public class DownLoadDatabase {
             entity.downed = cursor.getInt(cursor.getColumnIndex(DownLoad.Columns.DOWNED));
             entity.total = cursor.getInt(cursor.getColumnIndex(DownLoad.Columns.TOTAL));
             entity.saveName = cursor.getString(cursor.getColumnIndex(DownLoad.Columns.SAVENAME));
+            entity.lastModify = cursor.getString(cursor.getColumnIndex(DownLoad.Columns.LASTMODIFY));
         }
         if (!cursor.isClosed()) {
             cursor.close();
@@ -130,27 +133,6 @@ public class DownLoadDatabase {
         SQLiteDatabase sqlite = dbHelper.getWritableDatabase();
         sqlite.execSQL(sql, new Object[]{entity.downed, String.valueOf(entity.dataId)});
         sqlite.close();
-    }
-
-    public synchronized DownLoadEntity querySingle(String url, String start) {
-        SQLiteDatabase sqlite = dbHelper.getWritableDatabase();
-        DownLoadEntity entity = null;
-        Cursor cursor = sqlite.rawQuery(DownLoad.QUERY_URL_SQL_ID, new String[]{url, start});
-        if (cursor.moveToNext()) {
-            entity = new DownLoadEntity();
-            entity.url = cursor.getString(cursor.getColumnIndex(DownLoad.Columns.URL));
-            entity.start = cursor.getInt(cursor.getColumnIndex(DownLoad.Columns.START));
-            entity.end = cursor.getInt(cursor.getColumnIndex(DownLoad.Columns.END));
-            entity.dataId = cursor.getInt(cursor.getColumnIndex(DownLoad.Columns.ID));
-            entity.downed = cursor.getInt(cursor.getColumnIndex(DownLoad.Columns.DOWNED));
-            entity.total = cursor.getInt(cursor.getColumnIndex(DownLoad.Columns.TOTAL));
-            entity.saveName = cursor.getString(cursor.getColumnIndex(DownLoad.Columns.SAVENAME));
-        }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
-        sqlite.close();
-        return entity;
     }
 
     /**
@@ -208,6 +190,7 @@ public class DownLoadDatabase {
             entity.downed = cursor.getInt(cursor.getColumnIndex(DownLoad.Columns.DOWNED));
             entity.total = cursor.getInt(cursor.getColumnIndex(DownLoad.Columns.TOTAL));
             entity.saveName = cursor.getString(cursor.getColumnIndex(DownLoad.Columns.SAVENAME));
+            entity.lastModify = cursor.getString(cursor.getColumnIndex(DownLoad.Columns.LASTMODIFY));
             data.add(entity);
         }
         if (!cursor.isClosed()) {

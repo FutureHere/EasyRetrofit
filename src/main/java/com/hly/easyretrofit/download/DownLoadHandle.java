@@ -1,5 +1,7 @@
 package com.hly.easyretrofit.download;
 
+import android.text.TextUtils;
+
 import com.hly.easyretrofit.download.db.DownLoadDatabase;
 import com.hly.easyretrofit.download.db.DownLoadEntity;
 import com.hly.easyretrofit.retrofit.NetWorkRequest;
@@ -34,52 +36,18 @@ class DownLoadHandle {
     List<DownLoadEntity> queryDownLoadData(List<DownLoadEntity> list) {
         final Iterator iterator = list.iterator();
         while (iterator.hasNext()) {
-            final DownLoadEntity downLoadEntity = (DownLoadEntity) iterator.next();
+            DownLoadEntity downLoadEntity = (DownLoadEntity) iterator.next();
             downLoadEntity.downed = 0;
+            Call<ResponseBody> mResponseCall = null;
             List<DownLoadEntity> dataList = mDownLoadDatabase.query(downLoadEntity.url);
-            if (dataList.size() > 0) {//说明下载过
-                File file = new File(downLoadEntity.saveName);
-                if (file.exists()) {
-                    //文件存在 下载剩余
-                    downLoadEntity.multiList = dataList;
-                    Iterator dataIterator = dataList.iterator();
-                    while (dataIterator.hasNext()) {
-                        DownLoadEntity dataEntity = (DownLoadEntity) dataIterator.next();
-                        downLoadEntity.total = dataEntity.total;
-                        downLoadEntity.downed += dataEntity.downed;
-                    }
-                } else {
-                    //文件不存在 删除数据库 重新下载
-                    mDownLoadDatabase.deleteAllByUrl(downLoadEntity.url);
-                    downLoadEntity.total = dataList.get(0).total;
+            if (dataList.size() > 0) {
+                if (!TextUtils.isEmpty(dataList.get(0).lastModify)) {
+                    mResponseCall = NetWorkRequest.getInstance().getDownLoadService().getHttpHeaderWithIfRange(downLoadEntity.url, dataList.get(0).lastModify, "bytes=" + 0 + "-" + 0);
                 }
-                setCount();
             } else {
-                //数据库中没记录 说明是新任务 获取文件长度
-               final Call<ResponseBody> mResponseCall = NetWorkRequest.getInstance().getDownLoadService().downloadFile(downLoadEntity.url, "bytes=" + 0 + "-" + 0);
-                GetFileCountListener mGetFileCountListener = new GetFileCountListener() {
-                    int reCount = 3;
-
-                    @Override
-                    public void success(Long fileSize) {
-                        setCount();
-                        downLoadEntity.total = fileSize;
-                    }
-
-                    @Override
-                    public void failed() {
-                        if (reCount <= 0) {
-                            if (!mGetFileService.isShutdown()) {
-                                mGetFileService.shutdownNow();
-                            }
-                        } else {
-                            reCount--;
-                            executeGetFileWork(mResponseCall, this);
-                        }
-                    }
-                };
-                executeGetFileWork(mResponseCall, mGetFileCountListener);
+                mResponseCall = NetWorkRequest.getInstance().getDownLoadService().getHttpHeader(downLoadEntity.url, "bytes=" + 0 + "-" + 0);
             }
+            executeGetFileWork(mResponseCall, new GetFileCount(downLoadEntity, mResponseCall));
         }
         while (!mGetFileService.isShutdown() && getCount() != list.size()) {
 
@@ -99,5 +67,63 @@ class DownLoadHandle {
 
     private synchronized int getCount() {
         return mDownLoadCount;
+    }
+
+    private class GetFileCount implements GetFileCountListener {
+
+        private DownLoadEntity mDownLoadEntity;
+
+        private Call<ResponseBody> mResponseCall;
+
+
+        public GetFileCount(DownLoadEntity downLoadEntity, Call<ResponseBody> responseCall) {
+            mDownLoadEntity = downLoadEntity;
+            mResponseCall = responseCall;
+        }
+
+        int reCount = 3;
+
+        @Override
+        public void success(boolean isSupportMulti, boolean isNew, String modified, Long fileSize) {
+            mDownLoadEntity.total = fileSize;
+            mDownLoadEntity.lastModify = modified;
+            mDownLoadEntity.isSupportMulti = isSupportMulti;
+            if (!isNew) {
+                //未更换资源
+                List<DownLoadEntity> dataList = mDownLoadDatabase.query(mDownLoadEntity.url);
+                if (dataList.size() > 0) {//说明下载过
+                    File file = new File(mDownLoadEntity.saveName);
+                    if (file.exists()) {
+                        //文件存在 下载剩余
+                        mDownLoadEntity.multiList = dataList;
+                        Iterator dataIterator = dataList.iterator();
+                        while (dataIterator.hasNext()) {
+                            DownLoadEntity dataEntity = (DownLoadEntity) dataIterator.next();
+                            mDownLoadEntity.downed += dataEntity.downed;
+                        }
+                    } else {
+                        //文件不存在 删除数据库 重新下载
+                        mDownLoadDatabase.deleteAllByUrl(mDownLoadEntity.url);
+                    }
+                }
+            } else {
+                //更换资源，重新下载
+                mDownLoadDatabase.deleteAllByUrl(mDownLoadEntity.url);
+            }
+            setCount();
+        }
+
+        @Override
+        public void failed() {
+            if (reCount <= 0) {
+                setCount();
+                if (!mGetFileService.isShutdown()) {
+                    mGetFileService.shutdownNow();
+                }
+            } else {
+                reCount--;
+                executeGetFileWork(mResponseCall, this);
+            }
+        }
     }
 }

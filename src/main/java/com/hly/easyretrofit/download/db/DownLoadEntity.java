@@ -18,6 +18,8 @@ public class DownLoadEntity implements Parcelable {
     public long total;
     public String saveName;
     public List<DownLoadEntity> multiList;
+    public String lastModify;
+    public boolean isSupportMulti;
 
     public DownLoadEntity() {
     }
@@ -26,7 +28,6 @@ public class DownLoadEntity implements Parcelable {
         this.url = url;
         this.saveName = saveName;
     }
-
 
 
     @Override

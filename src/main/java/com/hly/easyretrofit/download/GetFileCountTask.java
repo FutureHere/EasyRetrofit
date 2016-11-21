@@ -1,5 +1,7 @@
 package com.hly.easyretrofit.download;
 
+import android.text.TextUtils;
+
 import java.io.IOException;
 
 import okhttp3.ResponseBody;
@@ -15,32 +17,35 @@ public class GetFileCountTask implements Runnable {
 
     private GetFileCountListener mGetFileCountListener;
 
-    public GetFileCountTask(Call<ResponseBody> responseCall, GetFileCountListener getFileCountListener) {
+    GetFileCountTask(Call<ResponseBody> responseCall, GetFileCountListener getFileCountListener) {
         mResponseCall = responseCall;
         mGetFileCountListener = getFileCountListener;
     }
 
     @Override
     public void run() {
+        Response response = null;
         try {
-            Response response = mResponseCall.execute();
+            response = mResponseCall.execute();
             if (response.isSuccessful()) {
                 if (mGetFileCountListener != null) {
-                    mGetFileCountListener.success(Long.parseLong(response.headers().get("Content-Range").split("/")[1]));
+                    mGetFileCountListener.success((!TextUtils.isEmpty(response.headers().get("Content-Range")) && !TextUtils.isEmpty(response.headers().get("Content-Length"))), response.code() != 206, response.headers().get("Last-Modified"), Long.parseLong(response.headers().get("Content-Range").split("/")[1]));
                 }
             } else {
                 if (mGetFileCountListener != null) {
                     mGetFileCountListener.failed();
                 }
             }
-            if (response.body() != null) {
-                ((ResponseBody) response.body()).close();
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
             if (mGetFileCountListener != null) {
                 mGetFileCountListener.failed();
+            }
+        } finally {
+            if (response.body() != null) {
+                ((ResponseBody) response.body()).close();
             }
         }
     }

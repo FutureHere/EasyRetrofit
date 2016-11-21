@@ -124,7 +124,7 @@ class DownLoadRequest {
         long startSize, endSize;
 
         DownLoadTask downLoadTask;
-        if (mMultiLine != 0 && downLoadEntity.total > mMultiLine) {
+        if (mMultiLine != 0 && downLoadEntity.total > mMultiLine && downLoadEntity.isSupportMulti) {
             //多线程下载
             int threadNum = (int) ((downLoadEntity.total % mMultiLine == 0) ? downLoadEntity.total / mMultiLine : downLoadEntity.total / mMultiLine + 1);
 
@@ -136,13 +136,13 @@ class DownLoadRequest {
                         endSize = downLoadEntity.total - 1;
                     }
                 }
-                DownLoadEntity entity = mDownLoadDatabase.insert(downLoadEntity.url, (int) startSize, (int) endSize, (int) downLoadEntity.total, downLoadEntity.saveName);
+                DownLoadEntity entity = mDownLoadDatabase.insert(downLoadEntity.url, (int) startSize, (int) endSize, (int) downLoadEntity.total, downLoadEntity.saveName, downLoadEntity.lastModify);
                 downLoadTask = new DownLoadTask.Builder().downLoadModel(entity).downLoadTaskListener(downLoadTaskListener).build();
                 executeNetWork(entity, downLoadTask, downLoadTaskMap);
             }
         } else {
             //单线程下载
-            DownLoadEntity entity = mDownLoadDatabase.insert(downLoadEntity.url, 0, (int) downLoadEntity.total - 1, (int) downLoadEntity.total, downLoadEntity.saveName);
+            DownLoadEntity entity = mDownLoadDatabase.insert(downLoadEntity.url, 0, (int) downLoadEntity.total - 1, (int) downLoadEntity.total, downLoadEntity.saveName, downLoadEntity.lastModify);
             downLoadTask = new DownLoadTask.Builder().downLoadModel(entity).downLoadTaskListener(downLoadTaskListener).build();
             executeNetWork(entity, downLoadTask, downLoadTaskMap);
         }

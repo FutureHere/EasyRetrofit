@@ -2,7 +2,7 @@ package com.hly.easyretrofit.download;
 
 
 import com.hly.easyretrofit.download.db.DownLoadEntity;
-import com.hly.easyretrofit.retrofit.KKNetWorkRequest;
+import com.hly.easyretrofit.retrofit.NetWorkRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,10 +48,10 @@ public class DownLoadTask implements Runnable {
     public void run() {
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         if (mDownLoadEntity.downed != 0) {
-            mResponseCall = KKNetWorkRequest.getInstance().getDownLoadService().downloadFile(mDownLoadEntity.url,
+            mResponseCall = NetWorkRequest.getInstance().getDownLoadService().downloadFile(mDownLoadEntity.url,
                     "bytes=" + (mDownLoadEntity.downed + mDownLoadEntity.start) + "-" + mDownLoadEntity.end);
         } else {
-            mResponseCall = KKNetWorkRequest.getInstance().getDownLoadService().downloadFile(mDownLoadEntity.url,
+            mResponseCall = NetWorkRequest.getInstance().getDownLoadService().downloadFile(mDownLoadEntity.url,
                     "bytes=" + mDownLoadEntity.start + "-" + mDownLoadEntity.end);
         }
         ResponseBody result = null;
@@ -119,14 +119,11 @@ public class DownLoadTask implements Runnable {
                 }
                 return true;
             } finally {
+
                 oSavedFile.close();
 
                 if (inputStream != null) {
                     inputStream.close();
-                }
-
-                if (body != null) {
-                    body.close();
                 }
             }
         } catch (IOException e) {

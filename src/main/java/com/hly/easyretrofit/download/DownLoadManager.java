@@ -2,7 +2,7 @@ package com.hly.easyretrofit.download;
 
 import com.hly.easyretrofit.download.db.DownLoadDatabase;
 import com.hly.easyretrofit.download.db.DownLoadEntity;
-import com.hly.easyretrofit.retrofit.KKNetWorkRequest;
+import com.hly.easyretrofit.retrofit.NetWorkRequest;
 
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 
 public class DownLoadManager {
 
-    private DownLoadDatabase mDownLoadDatabase = new DownLoadDatabase(KKNetWorkRequest.getInstance().mContext);
+    private DownLoadDatabase mDownLoadDatabase = new DownLoadDatabase(NetWorkRequest.getInstance().mContext);
 
     private ExecutorService mExecutorService = Executors.newCachedThreadPool();
 

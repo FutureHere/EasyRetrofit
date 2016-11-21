@@ -5,7 +5,7 @@ package com.hly.easyretrofit.download;
  * email hugh_hly@sina.cn
  */
 public interface GetFileCountListener {
-    void success(Long fileSize);
+    void success(boolean isSupportMulti, boolean isNew, String modified, Long fileSize);
 
     void failed();
 }
