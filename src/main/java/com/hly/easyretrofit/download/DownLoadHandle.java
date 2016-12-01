@@ -41,8 +41,10 @@ class DownLoadHandle {
             Call<ResponseBody> mResponseCall = null;
             List<DownLoadEntity> dataList = mDownLoadDatabase.query(downLoadEntity.url);
             if (dataList.size() > 0) {
+                downLoadEntity.multiList = dataList;
                 if (!TextUtils.isEmpty(dataList.get(0).lastModify)) {
-                    mResponseCall = NetWorkRequest.getInstance().getDownLoadService().getHttpHeaderWithIfRange(downLoadEntity.url, dataList.get(0).lastModify, "bytes=" + 0 + "-" + 0);
+                    mResponseCall = NetWorkRequest.getInstance().getDownLoadService()
+                            .getHttpHeaderWithIfRange(downLoadEntity.url, dataList.get(0).lastModify, "bytes=" + 0 + "-" + 0);
                 }
             } else {
                 mResponseCall = NetWorkRequest.getInstance().getDownLoadService().getHttpHeader(downLoadEntity.url, "bytes=" + 0 + "-" + 0);
@@ -90,13 +92,11 @@ class DownLoadHandle {
             mDownLoadEntity.isSupportMulti = isSupportMulti;
             if (!isNew) {
                 //未更换资源
-                List<DownLoadEntity> dataList = mDownLoadDatabase.query(mDownLoadEntity.url);
-                if (dataList.size() > 0) {//说明下载过
+                if (mDownLoadEntity.multiList != null) {//说明下载过
                     File file = new File(mDownLoadEntity.saveName);
                     if (file.exists()) {
                         //文件存在 下载剩余
-                        mDownLoadEntity.multiList = dataList;
-                        Iterator dataIterator = dataList.iterator();
+                        Iterator dataIterator = mDownLoadEntity.multiList.iterator();
                         while (dataIterator.hasNext()) {
                             DownLoadEntity dataEntity = (DownLoadEntity) dataIterator.next();
                             mDownLoadEntity.downed += dataEntity.downed;
