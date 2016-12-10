@@ -102,11 +102,13 @@ class DownLoadHandle {
                             mDownLoadEntity.downed += dataEntity.downed;
                         }
                     } else {
+                        mDownLoadEntity.multiList = null;
                         //文件不存在 删除数据库 重新下载
                         mDownLoadDatabase.deleteAllByUrl(mDownLoadEntity.url);
                     }
                 }
             } else {
+                mDownLoadEntity.multiList = null;
                 //更换资源，重新下载
                 mDownLoadDatabase.deleteAllByUrl(mDownLoadEntity.url);
             }
