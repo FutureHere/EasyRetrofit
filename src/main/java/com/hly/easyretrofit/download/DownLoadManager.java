@@ -4,6 +4,7 @@ import com.hly.easyretrofit.download.db.DownLoadDatabase;
 import com.hly.easyretrofit.download.db.DownLoadEntity;
 import com.hly.easyretrofit.retrofit.NetWorkRequest;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,18 @@ public class DownLoadManager {
         });
     }
 
+    //默认支持多线程下载
+    public void downLoad(final DownLoadEntity downLoadEntity, final String tag, final DownLoadBackListener downLoadTaskListener) {
+        List<DownLoadEntity> list = new ArrayList<>();
+        list.add(downLoadEntity);
+        downLoad(list, tag, downLoadTaskListener, MULTI_LINE);
+    }
+
+    public void downLoad(final DownLoadEntity downLoadEntity, final String tag, final DownLoadBackListener downLoadTaskListener, final long multiLine) {
+        List<DownLoadEntity> list = new ArrayList<>();
+        list.add(downLoadEntity);
+        downLoad(list, tag, downLoadTaskListener, multiLine);
+    }
 
     //取消所有任务
     public void cancel() {
