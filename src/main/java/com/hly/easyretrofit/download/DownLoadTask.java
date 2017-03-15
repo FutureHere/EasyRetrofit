@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.RandomAccessFile;
 import java.net.SocketTimeoutException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -85,12 +87,15 @@ public class DownLoadTask implements Runnable {
 
             RandomAccessFile oSavedFile = new RandomAccessFile(futureStudioIconFile, "rw");
 
-            oSavedFile.seek(startSet + mDownedSet);
+            FileChannel channelOut = oSavedFile.getChannel();
+
+            MappedByteBuffer mappedBuffer = channelOut.map(FileChannel.MapMode.READ_WRITE,
+                    startSet + mDownedSet, body.contentLength());
 
             InputStream inputStream = null;
 
             try {
-                byte[] fileReader = new byte[4096];
+                byte[] fileReader = new byte[1024 * 8];
 
                 inputStream = body.byteStream();
 
@@ -100,7 +105,7 @@ public class DownLoadTask implements Runnable {
                     if (read == -1) {
                         break;
                     }
-                    oSavedFile.write(fileReader, 0, read);
+                    mappedBuffer.put(fileReader, 0, read);
 
                     mFileSizeDownloaded += read;
 
@@ -119,6 +124,7 @@ public class DownLoadTask implements Runnable {
                 }
                 return true;
             } finally {
+                channelOut.close();
 
                 oSavedFile.close();
 
